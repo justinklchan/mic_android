@@ -21,7 +21,6 @@ public class AudioSpeaker extends Thread {
             AudioManager.STREAM_RING, AudioManager.STREAM_SYSTEM,
             AudioManager.STREAM_VOICE_CALL};
 
-    int preamble_length;
     public AudioSpeaker(Context mycontext, short[] samples, int samplingFreq) {
         this.samplingFreq= samplingFreq;
         this.speakerType = AudioManager.STREAM_SYSTEM; // streamType – the type of the audio stream
@@ -50,7 +49,7 @@ public class AudioSpeaker extends Thread {
 
     public void play(double vol, int loops) {
         try {
-            track1.setLoopPoints(preamble_length, samples.length, loops);
+            track1.setLoopPoints(0, samples.length, loops);
             track1.setVolume((float)vol);
             track1.play();
         }catch(Exception e) {
