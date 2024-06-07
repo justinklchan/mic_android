@@ -7,12 +7,16 @@ import android.util.Log;
 
 public class Worker  extends AsyncTask<Void, Void, Void> {
     int freq;
+    double vol;
     Context context;
     int fs;
+    int length;
     String fname;
 
-    public Worker(Context context, int freq, int fs, String fname) {
+    public Worker(Context context, int freq, double vol, int length, int fs, String fname) {
         this.freq = freq;
+        this.vol=vol;
+        this.length = length;
         this.context = context;
         this.fs = fs;
         this.fname = fname;
@@ -27,19 +31,17 @@ public class Worker  extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        int recTime = 20; // in seconds
         short[] tone = Tone.generateTone(freq,1,fs);
 
-        OfflineRecorder rec = new OfflineRecorder(MediaRecorder.AudioSource.DEFAULT,fs,fs*recTime, context, fname, freq);
+        OfflineRecorder rec = new OfflineRecorder(MediaRecorder.AudioSource.DEFAULT,fs,fs*length, context, fname, freq);
         rec.start();
 
         AudioSpeaker speaker = new AudioSpeaker(context, tone, fs);
-        double vol = Double.parseDouble(Constants.volEt.getText().toString());
         speaker.play(vol,-1);
 
         Log.e("asdf","start");
         try {
-            Thread.sleep(recTime*1000);
+            Thread.sleep(length*1000);
         }
         catch(Exception e){
             Log.e("asdf","Asdf");

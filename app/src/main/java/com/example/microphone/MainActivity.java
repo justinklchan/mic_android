@@ -31,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     LineChart lineChart;
     private int grantResults[];
-    EditText editTextNumber;
     int freq=0;
+    double vol=0;
+    int length=0;
     Worker task;
     Activity av;
     TextView tv;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 closeKeyboard();
-                task = new Worker(av,freq,48000,fname);
+                task = new Worker(av,freq,vol,length, 48000,fname);
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 Constants.startButton.setEnabled(false);
                 Constants.stopButton.setEnabled(true);
@@ -80,11 +81,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        editTextNumber = (EditText)findViewById(R.id.editTextNumber);
+        Constants.freqEt = (EditText)findViewById(R.id.editTextNumber);
         Constants.volEt = (EditText)findViewById(R.id.editTextNumber2);
+        Constants.lengthEt = (EditText)findViewById(R.id.editTextNumber3);
 
-        freq=Integer.parseInt(editTextNumber.getText().toString());
-        editTextNumber.addTextChangedListener(new TextWatcher() {
+        Context c= this;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        freq=prefs.getInt("freq",200);
+        Constants.freqEt.setText(freq+"");
+        Constants.freqEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
             }
@@ -95,12 +100,60 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence cs, int start,
                                       int before, int count) {
-                String s = editTextNumber.getText().toString();
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+                String s = Constants.freqEt.getText().toString();
                 if (Utils.isInteger(s)) {
                     freq=Integer.parseInt(s);
+                    editor.putInt("freq", freq);
+                    editor.commit();
                 }
             }
         });
+        vol=prefs.getFloat("vol", 0.1f);
+        Constants.volEt.setText(vol+"");
+        Constants.volEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence cs, int start,
+                                      int before, int count) {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+                String s = Constants.volEt.getText().toString();
+                if (Utils.isDouble(s)) {
+                    vol=Double.parseDouble(s);
+                    editor.putFloat("vol", (float)vol);
+                    editor.commit();
+                }
+            }
+        });
+        length=prefs.getInt("length",30);
+        Constants.lengthEt.setText(length+"");
+        Constants.lengthEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence cs, int start,
+                                      int before, int count) {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+                String s = Constants.lengthEt.getText().toString();
+                if (Utils.isInteger(s)) {
+                    length=Integer.parseInt(s);
+                    editor.putInt("length", length);
+                    editor.commit();
+                }
+            }
+        });
+
     }
 
     public void closeKeyboard() {
