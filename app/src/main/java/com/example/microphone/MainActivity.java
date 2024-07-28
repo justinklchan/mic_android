@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         vol=prefs.getFloat("vol", 0.1f);
-        Constants.volEt.setText(vol+"");
+        String volText = vol+"";
+        Constants.volEt.setText(volText.substring(0,3));
         Constants.volEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
