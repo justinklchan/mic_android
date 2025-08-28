@@ -1,5 +1,6 @@
 package com.example.microphone;
-
+import android.widget.RadioButton;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     LineChart lineChart;
     private int grantResults[];
     int freq=0;
+    int freq2=0;
     double vol=0;
     int length=0;
     Worker task;
@@ -52,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         Constants.lineChart = (LineChart)findViewById(R.id.linechart);
         Constants.startButton = (Button)findViewById(R.id.button);
         Constants.stopButton = (Button)findViewById(R.id.button2);
+        Constants.b1 = (RadioButton)findViewById(R.id.radioOption1);
+        Constants.b2 = (RadioButton)findViewById(R.id.radioOption1);
         Constants.startButton.setEnabled(true);
         Constants.stopButton.setEnabled(false);
         Constants.startButton.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +71,10 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 closeKeyboard();
-                task = new Worker(av,freq,vol,length, 48000,fname);
+                int signalType = Constants.b1.isChecked()?0:1;
+                double chirpTime=Double.parseDouble(Constants.chirpTimeEt.getText().toString());
+                double gapTime=Double.parseDouble(Constants.gapTimeEt.getText().toString());
+                task = new Worker(av,freq,freq2,signalType,chirpTime,gapTime,vol,length, 48000,fname);
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 Constants.startButton.setEnabled(false);
                 Constants.stopButton.setEnabled(true);
@@ -82,12 +90,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Constants.freqEt = (EditText)findViewById(R.id.editTextNumber);
+        Constants.freqEt2 = (EditText)findViewById(R.id.editTextNumber4);
+        Constants.chirpTimeEt = (EditText)findViewById(R.id.editTextNumber5);
+        Constants.gapTimeEt = (EditText)findViewById(R.id.editTextNumber6);
         Constants.volEt = (EditText)findViewById(R.id.editTextNumber2);
         Constants.lengthEt = (EditText)findViewById(R.id.editTextNumber3);
 
         Context c= this;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         freq=prefs.getInt("freq",200);
+        freq2=prefs.getInt("freq2",1000);
         Constants.freqEt.setText(freq+"");
         Constants.freqEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -109,6 +121,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        Constants.freqEt2.setText(freq2+"");
+        Constants.freqEt2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence cs, int start,
+                                      int before, int count) {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(c).edit();
+                String s = Constants.freqEt2.getText().toString();
+                if (Utils.isInteger(s)) {
+                    freq2=Integer.parseInt(s);
+                    editor.putInt("freq2", freq2);
+                    editor.commit();
+                }
+            }
+        });
+
         vol=prefs.getFloat("vol", 0.1f);
         String volText = vol+"";
         Constants.volEt.setText(volText.substring(0,3));
@@ -155,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        RadioGroup radioGroup = findViewById(R.id.radioGroup);
     }
 
     public void closeKeyboard() {
