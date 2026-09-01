@@ -1,3 +1,53 @@
 <resources>
     <string name="app_name">Microphone</string>
+
+    <!-- Header -->
+    <string name="title_instrument">Tone &amp; Spectrum</string>
+
+    <!-- Status lamp -->
+    <string name="status_ready">Ready</string>
+    <string name="status_recording">Recording</string>
+    <string name="status_no_mic">Mic blocked</string>
+
+    <!-- Readout -->
+    <string name="unit_hz">Hz</string>
+    <string name="unit_seconds">s</string>
+
+    <!-- Chart -->
+    <string name="chart_axis_level">Level (dB)</string>
+    <string name="chart_axis_frequency">Frequency (Hz)</string>
+    <string name="chart_empty">Set a frequency, then press Start to plot the spectrum.</string>
+    <string name="chart_marker_target">Target</string>
+    <string name="chart_marker_f1">f1</string>
+    <string name="chart_marker_f2">f2</string>
+    <string name="action_reset_view">Reset view</string>
+    <string name="recording_id">Recording %1$s</string>
+    <string name="recording_none">No recording yet</string>
+
+    <!-- Parameters -->
+    <string name="label_parameters">Parameters</string>
+    <!-- Shown in place of the settings rows while a run is in progress -->
+    <string name="summary_single">%1$d Hz \u00b7 Volume %2$s \u00b7 %3$d s</string>
+    <string name="summary_dual">%1$d Hz + %2$d Hz \u00b7 Volume %3$s \u00b7 %4$d s</string>
+    <string name="label_frequency">Frequency</string>
+    <string name="label_frequency_1">Frequency 1</string>
+    <string name="label_frequency_2">Frequency 2</string>
+    <string name="label_second_tone">Second tone</string>
+    <string name="label_volume">Volume</string>
+    <string name="label_duration">Duration</string>
+    <string name="hint_frequency">Tone frequency in hertz</string>
+    <string name="hint_frequency_2">Second tone frequency in hertz</string>
+    <string name="hint_volume">Playback level, 0 to 1</string>
+    <string name="hint_duration">Recording length in seconds</string>
+
+    <!-- Validation -->
+    <string name="error_frequency">Frequency must be between %1$d and %2$d Hz</string>
+    <string name="error_volume">Volume must be between 0 and 1</string>
+    <string name="error_duration">Duration must be between %1$d and %2$d seconds</string>
+
+    <!-- Transport -->
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="countdown_remaining">Rec %1$d s</string>
+    <string name="permission_needed">Microphone access is off. Turn it on in Settings to measure.</string>
 </resources>

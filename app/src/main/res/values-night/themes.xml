@@ -1,16 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.Microphone" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+    <!-- Only the window chrome flips; every colour comes from values-night/colors.xml. -->
+    <style name="Theme.Microphone" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/mark</item>
         <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/trace</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="colorSurface">@color/panel</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="colorOutline">@color/rule</item>
+        <item name="android:colorBackground">@color/paper</item>
+        <item name="android:windowBackground">@color/paper</item>
+        <item name="android:statusBarColor">@color/paper</item>
+        <item name="android:navigationBarColor">@color/paper</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
     </style>
 </resources>

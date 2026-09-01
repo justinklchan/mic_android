@@ -26,11 +26,16 @@ public class AudioSpeaker extends Thread {
         this.speakerType = AudioManager.STREAM_SYSTEM; // streamType – the type of the audio stream
         this.mycontext = mycontext;
         man = (AudioManager)mycontext.getSystemService(Context.AUDIO_SERVICE);
-        for (Integer i : streams) {
-            man.setStreamMute(i, true);
+        try {
+            for (Integer i : streams) {
+                man.setStreamMute(i, true);
+            }
+            man.setStreamMute(speakerType, false);
+            man.setStreamVolume(speakerType, man.getStreamMaxVolume(speakerType), 0);
+        } catch (SecurityException e) {
+            // Volume policy is locked down (Do Not Disturb); play at the current level.
+            Log.w("AudioSpeaker", "could not force stream volume: " + e);
         }
-        man.setStreamMute(speakerType, false);
-        man.setStreamVolume(speakerType,(int)(man.getStreamMaxVolume(speakerType)),0);
 
         write(samples);
     }
@@ -54,6 +59,21 @@ public class AudioSpeaker extends Thread {
             track1.play();
         }catch(Exception e) {
             Log.e("asdf",e.toString());
+        }
+    }
+
+    /** Stops playback and frees the track. Safe to call more than once. */
+    public void halt() {
+        try {
+            if (track1 != null) {
+                if (track1.getState() == AudioTrack.STATE_INITIALIZED) {
+                    track1.stop();
+                }
+                track1.release();
+                track1 = null;
+            }
+        } catch (Exception e) {
+            Log.w("AudioSpeaker", "halt: " + e);
         }
     }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Night panel: the same audiogram palette on a slate instrument face. -->
+<resources>
+    <color name="paper">#0D141B</color>
+    <color name="panel">#151F29</color>
+
+    <color name="ink">#E6EDF3</color>
+    <color name="mute">#8B9DAF</color>
+
+    <color name="rule">#26333F</color>
+
+    <color name="trace">#FF6A57</color>
+    <color name="trace_pressed">#E4523F</color>
+    <color name="trace_fill">#3DFF6A57</color>
+
+    <color name="mark">#4E9FE0</color>
+
+    <color name="on_trace">#16202A</color>
+</resources>

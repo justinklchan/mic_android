@@ -1,14 +1,18 @@
 package com.example.microphone;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -26,13 +30,16 @@ public class OfflineRecorder extends Thread {
     Context context;
     String filename;
     int fs;
-    int freq;
+    private boolean framedView;
+    private long lastChartUpdate;
 
-    public OfflineRecorder(int microphone, int fs, int bufferLen, Context context, String filename, int freq) {
+    /** The spectrum only needs to look live; redrawing per audio buffer swamps the UI thread. */
+    private static final long CHART_INTERVAL_MS = 100;
+
+    public OfflineRecorder(int microphone, int fs, int bufferLen, Context context, String filename) {
         this.context = context;
         this.filename = filename;
         this.fs = fs;
-        this.freq = freq;
 
         minbuffersize = AudioRecord.getMinBufferSize(
                 fs,
@@ -75,28 +82,53 @@ public class OfflineRecorder extends Thread {
     }
 
     public void process() {
-        double[]out=fftnative_short(Constants.temp,Constants.temp.length);
-
-        List<Entry> lineData=new ArrayList<>();
-        float freqSpacing = (float)fs/out.length;
-        for(int i = 0; i < out.length; i++) {
-            lineData.add(new Entry(i*freqSpacing, (float) out[i]));
+        // Recording is unaffected by this; only the on-screen refresh rate is capped.
+        long now = SystemClock.uptimeMillis();
+        if (now - lastChartUpdate < CHART_INTERVAL_MS) {
+            return;
         }
-        LineDataSet data1 = new LineDataSet(lineData, "");
-        data1.setDrawCircles(false);
-        data1.setColor(context.getResources().getColor(R.color.red));
-        List<ILineDataSet> data = new ArrayList<>();
-        data.add(data1);
-        Constants.lineChart.setData(new LineData(data));
+        lastChartUpdate = now;
 
-        int width=2000;
-        Constants.lineChart.getXAxis().setAxisMinimum(Math.max(freq-width,0));
-        Constants.lineChart.getXAxis().setAxisMaximum(Math.min(freq+width,24000));
-        Constants.lineChart.getAxisLeft().setAxisMinimum(0);
-        Constants.lineChart.getAxisLeft().setAxisMaximum(160);
+        double[] out = fftnative_short(Constants.temp, Constants.temp.length);
 
-        Constants.lineChart.notifyDataSetChanged();
-        Constants.lineChart.invalidate();
+        // Build the series off the UI thread, then hand the finished data over.
+        float freqSpacing = (float) fs / out.length;
+        List<Entry> lineData = new ArrayList<>(out.length);
+        for (int i = 0; i < out.length; i++) {
+            lineData.add(new Entry(i * freqSpacing, (float) out[i]));
+        }
+
+        if (!(context instanceof Activity)) {
+            return;
+        }
+        ((Activity) context).runOnUiThread(() -> {
+            LineChart chart = Constants.lineChart;
+            if (chart == null) {
+                return;
+            }
+
+            LineDataSet series = new LineDataSet(lineData, "");
+            series.setDrawCircles(false);
+            series.setDrawValues(false);
+            series.setMode(LineDataSet.Mode.LINEAR);
+            series.setLineWidth(1.4f);
+            series.setColor(ContextCompat.getColor(context, R.color.trace));
+            series.setDrawFilled(true);
+            series.setFillColor(ContextCompat.getColor(context, R.color.trace));
+            series.setFillAlpha(40);
+
+            List<ILineDataSet> data = new ArrayList<>();
+            data.add(series);
+            chart.setData(new LineData(data));
+            chart.notifyDataSetChanged();
+
+            // Frame the target once per run; after that the view is the user's to pan.
+            if (!framedView) {
+                framedView = true;
+                ((MainActivity) context).frameChartToTarget();
+            }
+            chart.invalidate();
+        });
     }
 
     public void halt() {

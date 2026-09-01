@@ -1,68 +1,59 @@
 package com.example.microphone;
 
-import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class Worker  extends AsyncTask<Void, Void, Void> {
-    int freq, freq2;
-    double vol;
-    int signalType;
-    Context context;
-    int fs;
-    double chirpTime,gapTime;
-    int length;
-    String fname;
+public class Worker extends AsyncTask<Void, Void, Void> {
+    private static final String TAG = "Worker";
 
-    public Worker(Context context, int freq, int freq2, int signalType, double chirpTime,double gapTime, double vol, int length, int fs, String fname) {
-        this.freq = freq;
-        this.freq2 = freq2;
-        this.signalType = signalType;
-        this.vol=vol;
-        this.chirpTime = chirpTime;
-        this.gapTime=gapTime;
+    private final MainActivity activity;
+    private final double[] freqs;
+    private final double vol;
+    private final int length;
+    private final int fs;
+    private final String fname;
+
+    public Worker(MainActivity activity, double[] freqs, double vol, int length, int fs, String fname) {
+        this.activity = activity;
+        this.freqs = freqs;
+        this.vol = vol;
         this.length = length;
-        this.context = context;
         this.fs = fs;
         this.fname = fname;
     }
 
     @Override
-    protected void onPostExecute(Void unused) {
-        super.onPostExecute(unused);
-        Constants.startButton.setEnabled(true);
-        Constants.stopButton.setEnabled(false);
+    protected Void doInBackground(Void... voids) {
+        short[] tone = Tone.generateTone(freqs, 1, fs);
+
+        OfflineRecorder rec = new OfflineRecorder(
+                MediaRecorder.AudioSource.DEFAULT, fs, fs * length, activity, fname);
+        rec.start();
+
+        AudioSpeaker speaker = new AudioSpeaker(activity, tone, fs);
+        speaker.play(vol, -1);
+
+        try {
+            Thread.sleep(length * 1000L);
+        } catch (InterruptedException e) {
+            Log.i(TAG, "run cancelled before its full duration");
+        }
+
+        speaker.halt();
+        rec.halt();
+        return null;
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected void onPostExecute(Void unused) {
+        super.onPostExecute(unused);
+        activity.onRunFinished();
+    }
 
-        OfflineRecorder rec = new OfflineRecorder(MediaRecorder.AudioSource.DEFAULT,fs,fs*length, context, fname, freq);
-        rec.start();
-
-        AudioSpeaker speaker=null;
-
-        if (signalType==0) {
-            short[] tone = Tone.generateTone(freq,1,fs);
-            speaker=new AudioSpeaker(context, tone, fs);
-        }
-        else if (signalType==1) {
-            short[] tone = Chirp.generateChirpSpeaker(freq,freq2,chirpTime,fs,0,gapTime);
-            speaker=new AudioSpeaker(context, tone, fs);
-        }
-        speaker.play(vol,-1);
-
-        Log.e("asdf","start");
-        try {
-            Thread.sleep(length*1000);
-        }
-        catch(Exception e){
-            Log.e("asdf","Asdf");
-        }
-        speaker.track1.stop();
-        rec.halt();
-        Log.e("asdf","stop");
-        return null;
+    @Override
+    protected void onCancelled(Void unused) {
+        super.onCancelled(unused);
+        activity.onRunFinished();
     }
 }

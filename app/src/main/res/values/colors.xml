@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Palette: "audiogram paper".
+    Drawn from clinical audiometry charts rather than oscilloscope phosphor -
+    cool paper, ink-navy rules, and the red/blue pair used to plot hearing
+    thresholds. Red carries the live signal, blue marks the target.
+    Dark equivalents live in values-night/colors.xml.
+-->
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!-- Surfaces -->
+    <color name="paper">#F2F4F7</color>
+    <color name="panel">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="ink">#0E2035</color>
+    <color name="mute">#667A8F</color>
+
+    <!-- Hairlines, dividers, chart grid -->
+    <color name="rule">#D3DCE6</color>
+
+    <!-- Signal red: the spectrum trace and the recording state -->
+    <color name="trace">#D6402F</color>
+    <color name="trace_pressed">#B4321F</color>
+    <color name="trace_fill">#33D6402F</color>
+
+    <!-- Marker blue: the target frequency and input focus -->
+    <color name="mark">#1D6FB8</color>
+
+    <color name="on_trace">#FFFFFF</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="red">#D22B2B</color>
-    <color name="green">#098d3a</color>
-    <color name="blue">#25c8ec</color>
 </resources>

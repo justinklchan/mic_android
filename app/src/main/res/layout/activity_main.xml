@@ -1,196 +1,369 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Instrument face, top to bottom: what you asked for (the readout), what came
+    back (the spectrum), what you can change (the parameters), and the transport.
+    The chart takes all leftover height so it stays the centre of attention,
+    and the settings collapse to a single summary line while a run is going.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/paper"
+    android:fitsSystemWindows="true"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="14dp"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1234567890"
-        android:textSize="25dp"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="start"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/linechart"
+    <!-- Header: instrument name and the state lamp -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
-        android:text="200"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="stop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextNumber2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        android:text=".1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber6" />
-
-    <EditText
-        android:id="@+id/editTextNumber3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="30"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="@+id/editTextNumber2"
-        app:layout_constraintStart_toStartOf="@+id/editTextNumber2"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber2" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Frequency 1"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNumber"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNumber"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextNumber" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Volume"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNumber2"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNumber2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextNumber2" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total time"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNumber3"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNumber3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber2" />
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber3">
+        android:gravity="center_vertical"
+        android:paddingBottom="12dp">
 
-        <RadioButton
-            android:id="@+id/radioOption1"
+        <TextView
+            style="@style/Text.Label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/ink"
+            android:text="@string/title_instrument" />
+
+        <ImageView
+            android:id="@+id/statusDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="7dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/dot_status" />
+
+        <TextView
+            android:id="@+id/statusText"
+            style="@style/Text.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Tone" />
+            android:text="@string/status_ready" />
 
-        <RadioButton
-            android:id="@+id/radioOption2"
-            android:layout_width="wrap_content"
+    </LinearLayout>
+
+    <!-- Spectrum panel: takes every spare pixel -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:minHeight="180dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_panel"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chirp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-    </RadioGroup>
+            <TextView
+                style="@style/Text.Label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:text="@string/chart_axis_level" />
 
-    <EditText
-        android:id="@+id/editTextNumber4"
-        android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/resetView"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.10"
+                android:textColor="@color/mark"
+                android:text="@string/action_reset_view" />
+
+        </LinearLayout>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/linechart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="6dp" />
+
+        <!-- Footer carries both the recording id and the x-axis unit on one line. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <!-- Kept as textView1: MainActivity writes the recording id here -->
+            <TextView
+                android:id="@+id/textView1"
+                style="@style/Text.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="middle"
+                android:text="@string/recording_none" />
+
+            <TextView
+                style="@style/Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textAllCaps="false"
+                android:text="@string/chart_axis_frequency" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Parameters: a spec sheet, label left and value right on hairline rows.
+         Collapses to a single summary line while a run is in progress. -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="1000"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="@+id/editTextNumber"
-        app:layout_constraintStart_toStartOf="@+id/editTextNumber"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        android:orientation="vertical"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_panel"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/settingsSummary"
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/ink"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone"
+            tools:text="200 Hz + 500 Hz / vol 0.1 / 30 s" />
+
+        <LinearLayout
+            android:id="@+id/settingsRows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:divider="@drawable/divider_rule"
+            android:showDividers="middle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+
+            <TextView
+                android:id="@+id/labelFrequency"
+                style="@style/Text.Label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_frequency" />
+
+            <EditText
+                android:id="@+id/editTextNumber"
+                style="@style/Field.Number"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionNext"
+                android:contentDescription="@string/hint_frequency"
+                tools:text="200" />
+
+            <TextView
+                style="@style/Text.Unit"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/unit_hz" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+
+            <TextView
+                style="@style/Text.Label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_second_tone" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchSecondTone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="0dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rowFrequency2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+
+            <TextView
+                style="@style/Text.Label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_frequency_2" />
+
+            <EditText
+                android:id="@+id/editTextNumber4"
+                style="@style/Field.Number"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionNext"
+                android:contentDescription="@string/hint_frequency_2"
+                tools:text="500" />
+
+            <TextView
+                style="@style/Text.Unit"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/unit_hz" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+
+            <TextView
+                style="@style/Text.Label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_volume" />
+
+            <EditText
+                android:id="@+id/editTextNumber2"
+                style="@style/Field.Number"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:imeOptions="actionNext"
+                android:contentDescription="@string/hint_volume"
+                tools:text="0.1" />
+
+            <Space
+                android:layout_width="32dp"
+                android:layout_height="1dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+
+            <TextView
+                style="@style/Text.Label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/label_duration" />
+
+            <EditText
+                android:id="@+id/editTextNumber3"
+                style="@style/Field.Number"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:imeOptions="actionDone"
+                android:contentDescription="@string/hint_duration"
+                tools:text="30" />
+
+            <TextView
+                style="@style/Text.Unit"
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/unit_seconds" />
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Transport. Red starts the tone and the trace; stop stays quiet. -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Frequency 2"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNumber4"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNumber4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp">
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chirp time"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextNumber5"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNumber5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber4" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button"
+            style="@style/Button.Transport"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.6"
+            android:layout_marginEnd="10dp"
+            android:text="@string/action_start"
+            android:textColor="@color/btn_start_text"
+            app:backgroundTint="@color/btn_start_bg" />
 
-    <EditText
-        android:id="@+id/editTextNumber5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text=".1"
-        android:inputType="numberDecimal"
-        app:layout_constraintEnd_toEndOf="@+id/editTextNumber4"
-        app:layout_constraintStart_toStartOf="@+id/editTextNumber4"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber4" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button2"
+            style="@style/Button.Transport"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/action_stop"
+            android:textColor="@color/btn_stop_text"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="@color/btn_stop_stroke"
+            app:strokeWidth="1dp"
+            app:elevation="0dp" />
 
-    <EditText
-        android:id="@+id/editTextNumber6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text=".5"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="@+id/editTextNumber5"
-        app:layout_constraintStart_toStartOf="@+id/editTextNumber5"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber5" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gap time"
-        app:layout_constraintBottom_toTopOf="@+id/editTextNumber2"
-        app:layout_constraintEnd_toStartOf="@+id/editTextNumber6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber5" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
